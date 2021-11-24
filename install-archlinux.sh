@@ -1,2 +1,4 @@
 #!/bin/bash
-echo "Hello World"
+echo "Welcome to ArchLinux-Installer by NormannatoR"
+sleep 1
+echo "Test Done"
