@@ -6,7 +6,7 @@ Tested with: **archlinux-gnome-2021.11.18-x86_64.iso**
 
 ## How To Use
 
-1. Use the Live-ISO above or the regarding iso from the offical [ArchLinux Website](https://archlinux.org/download/)
+1. Use the Live-ISO above or the regarding iso from the official [ArchLinux Website](https://archlinux.org/download/)
 
 2. Run the Script an follow the instruction
 
