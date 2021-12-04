@@ -122,8 +122,8 @@ func_partitioning() {
 	while true; do
     		read -p "Do you wish to use a separate device for your home directory? (This option will use the entire memory on the device for the home partition. Make sure to backup your data on this device before typing YES" yn
     		case $yn in
-			[Yy]* ) separatehome=1; exit;;
-			[Nn]* ) separatehome=0; exit;;
+			[Yy]* ) separatehome=1; break;;
+			[Nn]* ) separatehome=0; break;;
 			* ) echo "Please answer yes or no.";;
     		esac
 	done
@@ -203,6 +203,13 @@ func_gen_mirror_list() {
 
 }
 
+func_install_base() {
+	echo "##### Installing Base System #####"
+	echo "Note: The LTS-Kernal will get installed"
+	pacstrap /mnt base base-devel linux-lts linux-firmware nano vim dhcpcd lvm2 reflector
+
+}
+
 #########################
 ##### Main Methode ######
 #########################
@@ -237,4 +244,8 @@ func_partitioning
 func_gen_mirror_list
 
 ### Install Base Packages ###
+func_install_base
 
+### Change To Root Directory (Arch-ChRoot)
+echo "Changing to ArchLinux Root"
+arch-chroot /mnt /root
