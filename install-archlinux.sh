@@ -28,8 +28,19 @@ func_loadkeys() {
 }
 
 func_connect_to_wifi() {
-	echo "TODO"
-	sleep 10
+	#echo ""
+	#echo -n "Scanning Network Device..."
+	#iwctl
+	#listOfDevices=device list	
+	#echo " done"
+	#echo " Your Network Devices:"
+	#echo "$listOfDevices"
+	#read -p "Type the device you like to choose: " device
+	#iwctl
+	echo "Interactive Dialog not implemented yet"
+	echo "Opening iwctl (WIFI Connector Program)..."
+	iwctl
+	help
 }
 
 func_internet_connection() {
