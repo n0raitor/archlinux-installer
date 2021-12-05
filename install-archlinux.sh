@@ -6,7 +6,7 @@
 #################################
 LOADKEY=de-latin1
 LOCAL_MIRROR_COUNTRY='Germany'
-NUMBER_OF_MIRRORS=200
+NUMBER_OF_MIRRORS=20
 HOSTNAME=myhost
 KEYMAP=de-latin1
 FONT=lat9w-16
@@ -18,6 +18,10 @@ TIMEZONE=/usr/share/zoneinfo/Europe/Berlin
 #################################
 ##### Function Definitions ######
 #################################
+
+#########################
+##### Script Part 1 #####
+#########################
 
 func_prologue() {
 	# Are You Reads?
@@ -220,6 +224,8 @@ func_partitioning() {
 func_gen_mirror_list() {
 	echo ""
 	echo "### Gen Mirror List ###"
+	echo "Generating $NUMBER_OF_MIRRORS Mirror List Entries:"
+	sleep 1
 	reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l $NUMBER_OF_MIRRORS -p https --sort rate --save /etc/pacman.d/mirrorlist
 	echo ""
 }
@@ -238,16 +244,16 @@ func_config_archlinux() {
 	echo ""
 	
 	# Set Computer Hostname
-	echo $HOSTNAME > /etc/hostname
+	echo $HOSTNAME > /mnt/etc/hostname
 	 
 	# Set Keyboard Layout
-	echo KEYMAP=$KEYMAP > /etc/vconsole.conf  
+	echo KEYMAP=$KEYMAP > /mnt/etc/vconsole.conf  
 
 	# Set Font (optional)
-	echo FONT=$FONT >> /etc/vconsole.conf  
+	echo FONT=$FONT >> /mnt/etc/vconsole.conf  
 
 	# Set Locale
-	echo LANG=$LANG > /etc/locale.conf  # Set Language
+	echo LANG=$LANG > /mnt/etc/locale.conf  # Set Language
 	
 	# nano /etc/locale.gen
 	# -> uncomments this:
@@ -257,23 +263,11 @@ func_config_archlinux() {
 	#en_US.UTF-8
 	for lang in "${LOCALE}"
 	do
-		match="#" & $lang
-		insert=$lang
-		file="/etc/locale.gen"
+		match="#" & "$lang"
+		insert="$lang"
+		file="/mnt/etc/locale.gen"
 		sed -i "s/$match/$match\n$insert/" $file
 	done
-	
-	locale-gen
-
-	# Set Time
-	ln -sf $TIMEZONE /etc/localtime  # Set Timezone
-	hwclock --systohc --utc # Sync Hardware-Clock
-
-	# Set Root Password
-	echo ""
-	echo "Set your ROOT Password"
-	passwd root
-	exit
 	
 	# Gererate fstab
 	genfstab -U /mnt >> /mnt/etc/fstab  # (alt. change -U to -L to use Label instead of UUID
@@ -282,27 +276,21 @@ func_config_archlinux() {
 	echo "The Generated fstab file:"
 	cat /mnt/etc/fstab  # check gen
 	read "(Press Enter to Continue) "
-
-	arch-chroot /mnt  # Switch Back to Root
 	
 	while true; do
     		read -p "Do you wish to edit the fstab file (y/n)? " yn
 	    	case $yn in
-			[Yy]* ) nano /etc/fstab; break;;
+			[Yy]* ) nano /mnt/etc/fstab; break;;
 			[Nn]* ) break;;
 			* ) echo "Please answer yes or no.";;
 	    	esac
 	done
 	
-	echo "127.0.0.1		localhost.localdomain	localhost" >> /etc/hosts
-	echo "::1		localhost.localdomain	localhost" >> /etc/hosts
-	echo "127.0.0.1		$hostname.localdomain	$hostname" >> /etc/hosts
-	
+	echo "127.0.0.1		localhost.localdomain	localhost" >> /mnt/etc/hosts
+	echo "::1		localhost.localdomain	localhost" >> /mnt/etc/hosts
+	echo "127.0.0.1		$hostname.localdomain	$hostname" >> /mnt/etc/hosts
 }
 
-#########################
-##### Script Part 1 #####
-#########################
 func_script_part1() {
 	echo "Welcome to ArchLinux-Installer by NormannatoR"
 	sleep 1
@@ -336,11 +324,14 @@ func_script_part1() {
 
 	### Install Base Packages ###
 	func_install_base
+	
+	### Config Arch Linux ###
+	func_config_archlinux
 
 	### Copy Script to Root Dir on the ArchLinux Install
 	cp -v install-archlinux.sh /mnt/root/install-archlinux.sh
 	# TODO -> Copy other Important / Urgent Files
-
+	
 	### Change To Root Directory (Arch-ChRoot) ###
 	echo "Changing to ArchLinux Root"
 	arch-chroot /mnt /root/install-archlinux.sh continue
@@ -349,10 +340,42 @@ func_script_part1() {
 #########################
 ##### Script Part 2 #####
 #########################
-func_script_part2() {
-	### Config Arch Linux ###
-	func_config_archlinux
+
+func_post_arch_chroot_config() {
+	echo "### Post Config ###"
+	# Generate Locale
+	locale-gen  
+	
+	# Set Time
+	ln -sf $TIMEZONE /etc/localtime  # Set Timezone
+	hwclock --systohc --utc # Sync Hardware-Clock
+	
+	# Set Root Password
+	echo ""
+	echo "Set your ROOT Password"
+	passwd root
+	
+	# Generate Mirror List for ArchLinux System
+	echo "Generating $NUMBER_OF_MIRRORS Mirror List Entries:"
+	sleep 1
+	reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l $NUMBER_OF_MIRRORS -p https --sort rate --save /etc/pacman.d/mirrorlist
+	
+	
 }
+
+func_script_part2() {
+	echo "#####################################################"
+	echo "#  Arch Linux Base System - Arch-ChRoot Post Script #"
+	echo "#####################################################"
+	echo ""
+	# Post Arch-ChRoot Configuration and Generation
+	func_post_arch_chroot_config
+}
+
+
+arch-chroot /mnt  # Switch Back to Root
+
+
 
 #########################
 ##### Main Methode ######
