@@ -9,9 +9,14 @@ If you like to use a Desktop Environment during the installation, I created a Li
 
 ## How To Use
 
-1. Use the Live-ISO above or the regarding iso from the official [ArchLinux Website](https://archlinux.org/download/)
+1. Use the the Live-ISO above or the regarding ISO from the official [ArchLinux Website](https://archlinux.org/download/)
 
-2. Run the Script an follow the instruction
+2. Run the Script 
+```bash
+git clone https://github.com/normannator/archlinux-installer.git && cd archlinux-installer && ./install-archlinux.sh
+```
+
+3. Follow the Instruction
 
 In the Future, you are able to use arguments, to run different modes for a much quicker an simplier installation.
 
