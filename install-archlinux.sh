@@ -4,7 +4,7 @@
 ######### CONFIGURATION #########
 ##### (Later in Config File) ####
 #################################
-LOADKEY="de-latin1"
+LOADKEY=de-latin1
 LOCAL_MIRROR_COUNTRY='Germany'
 
 
@@ -217,19 +217,19 @@ echo "Welcome to ArchLinux-Installer by NormannatoR"
 sleep 1
 
 ### Prologue ###
-#func_prologue
+func_prologue
 
 ### LoadKeys ###
-#func_loadkeys
+func_loadkeys
 
 ### INTERNET CONNECTION ###
-#func_internet_connection
+func_internet_connection
 
 ### Check internet Connection ###
-#func_check_internet_connection
+func_check_internet_connection
 
 ### Hinweise - Note ###
-#func_release_notes
+func_release_notes
 
 ### Updating Database ###
 pacman -Syyy
