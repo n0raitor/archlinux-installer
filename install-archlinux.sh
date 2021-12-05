@@ -6,6 +6,7 @@
 #################################
 LOADKEY=de-latin1
 LOCAL_MIRROR_COUNTRY='Germany'
+NUMBER_OF_MIRRORS=200
 HOSTNAME=myhost
 KEYMAP=de-latin1
 FONT=lat9w-16
@@ -138,7 +139,7 @@ func_partitioning() {
     		esac
 	done
 	
-	if [ $separatehome = 1 ]
+	if [ $separatehome == 1 ]
 	then
 		# Set Root Device via input
 		lsblk
@@ -158,7 +159,7 @@ func_partitioning() {
 	echo " done"
 	echo ""
 	
-	if [ $separatehome = 1 ]
+	if [ $separatehome == 1 ]
 	then
 		echo -n "Create Home Device..."
 		sgdisk -o /dev/$separatehomedevice  # Create GPT Table
@@ -194,7 +195,7 @@ func_partitioning() {
 	mkfs.ext4 /dev/vg1/root
 	mkswap /dev/vg1/swap
 	
-	if [ $separatehome = 1 ]
+	if [ $separatehome == 1 ]
 	then
 		mkfs.ext4 /dev/${separatehomedevice}1
 	fi
@@ -205,7 +206,7 @@ func_partitioning() {
 	echo -n "Mounting Partitions..."
 	mount /dev/vg1/root /mnt
 	mkdir /mnt/home
-	if [ $separatehome = 1 ]
+	if [ $separatehome == 1 ]
 	then
 		mount /dev/${separatehomedevice}1 /mnt/home
 	fi
@@ -219,7 +220,7 @@ func_partitioning() {
 func_gen_mirror_list() {
 	echo ""
 	echo "### Gen Mirror List ###"
-	reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l 200 -p https --sort rate --save /etc/pacman.d/mirrorlist
+	reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l $NUMBER_OF_MIRRORS -p https --sort rate --save /etc/pacman.d/mirrorlist
 	echo ""
 }
 
@@ -300,44 +301,72 @@ func_config_archlinux() {
 }
 
 #########################
+##### Script Part 1 #####
+#########################
+func_script_part1() {
+	echo "Welcome to ArchLinux-Installer by NormannatoR"
+	sleep 1
+
+	### Prologue ###
+	func_prologue
+
+	### LoadKeys ###
+	func_loadkeys
+
+	### INTERNET CONNECTION ###
+	func_internet_connection
+
+	### Check internet Connection ###
+	func_check_internet_connection
+
+	### Hinweise - Note ###
+	func_release_notes
+
+	### Updating Database ###
+	pacman -Syyy
+
+	### Preconfig ###
+	export EDITOR=nano
+
+	### Partitioning ###
+	func_partitioning
+
+	### Gen Mirror List ###
+	func_gen_mirror_list
+
+	### Install Base Packages ###
+	func_install_base
+
+	### Copy Script to Root Dir on the ArchLinux Install
+	cp -v install-archlinux.sh /mnt/root/install-archlinux.sh
+	# TODO -> Copy other Important / Urgent Files
+
+	### Change To Root Directory (Arch-ChRoot) ###
+	echo "Changing to ArchLinux Root"
+	arch-chroot /mnt /mnt/root/install-archlinux.sh continue
+	}
+
+#########################
+##### Script Part 2 #####
+#########################
+func_script_part2() {
+	### Config Arch Linux ###
+	func_config_archlinux
+}
+
+#########################
 ##### Main Methode ######
 #########################
-echo "Welcome to ArchLinux-Installer by NormannatoR"
-sleep 1
+script_part="$1"
 
-### Prologue ###
-func_prologue
+if [ $script_part == "continue" ]
+then
+	func_script_part2
+else
+	func_script_part1
+fi
+	
 
-### LoadKeys ###
-func_loadkeys
 
-### INTERNET CONNECTION ###
-func_internet_connection
 
-### Check internet Connection ###
-func_check_internet_connection
 
-### Hinweise - Note ###
-func_release_notes
-
-### Updating Database ###
-pacman -Syyy
-
-### Preconfig ###
-export EDITOR=nano
-
-### Partitioning ###
-func_partitioning
-
-### Gen Mirror List ###
-func_gen_mirror_list
-
-### Install Base Packages ###
-func_install_base
-
-### Change To Root Directory (Arch-ChRoot) ###
-echo "Changing to ArchLinux Root"
-arch-chroot /mnt
-
-### Config Arch Linux ###
-func_config_archlinux
