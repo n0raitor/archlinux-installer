@@ -111,7 +111,8 @@ func_partitioning() {
 	deviceRoot=""
 	separatehome=0  # 1 if to create the home directory on a separe device
 	separatehomedevice=""
-
+	
+	echo ""
 	echo "##### PARTITIONING #####"
 	echo ""
 	lsblk
@@ -165,7 +166,7 @@ func_partitioning() {
 	cryptsetup luksFormat /dev/${deviceRoot}1
 	echo "Encrypting Root Partition... done"
 	echo "Enter The Password you set for your Root-Partition:"
-	cryptsetup open dev/${deviceRoot}1 cryptlvm
+	cryptsetup open /dev/${deviceRoot}1 cryptlvm
 	
 	#echo -n "Create Physical Volume"
 	pvcreate /dev/mapper/cryptlvm
