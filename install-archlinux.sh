@@ -4,7 +4,7 @@
 ######### CONFIGURATION #########
 ##### (Later in Config File) ####
 #################################
-LOADKEY=de-latin1
+LOADKEY="de-latin1"
 LOCAL_MIRROR_COUNTRY='Germany'
 
 
