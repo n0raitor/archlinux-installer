@@ -226,6 +226,10 @@ func_install_base() {
 	echo ""
 }
 
+func_config_archlinux() {
+	echo "TODO"
+}
+
 #########################
 ##### Main Methode ######
 #########################
@@ -262,6 +266,9 @@ func_gen_mirror_list
 ### Install Base Packages ###
 func_install_base
 
-### Change To Root Directory (Arch-ChRoot)
+### Change To Root Directory (Arch-ChRoot) ###
 echo "Changing to ArchLinux Root"
-arch-chroot /mnt /root
+arch-chroot /mnt
+
+### Config Arch Linux ###
+func_config_archlinux
