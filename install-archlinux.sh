@@ -343,7 +343,7 @@ func_script_part1() {
 
 	### Change To Root Directory (Arch-ChRoot) ###
 	echo "Changing to ArchLinux Root"
-	arch-chroot /mnt /mnt/root/install-archlinux.sh continue
+	arch-chroot /mnt /root/install-archlinux.sh continue
 	}
 
 #########################
