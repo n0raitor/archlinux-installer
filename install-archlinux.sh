@@ -162,7 +162,7 @@ func_partitioning() {
 	fi
 	
 	### Create Encrypted Device ###
-	echo "Enter The Password for your Root-Partition Encryption:"
+	echo "Set up Encryption..."
 	cryptsetup luksFormat /dev/${deviceRoot}1
 	echo "Encrypting Root Partition... done"
 	echo "Enter The Password you set for your Root-Partition:"
@@ -211,15 +211,19 @@ func_partitioning() {
 }
 
 func_gen_mirror_list() {
+	echo ""
+	echo "### Gen Mirror List ###"
 	reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l 200 -p https --sort rate --save /etc/pacman.d/mirrorlist
-
+	echo ""
 }
 
 func_install_base() {
 	echo "##### Installing Base System #####"
 	echo "Note: The LTS-Kernal will get installed"
 	pacstrap /mnt base base-devel linux-lts linux-firmware nano vim dhcpcd lvm2 reflector
-
+	echo ""
+	echo "Installation of the Base System DONE
+	echo ""
 }
 
 #########################
