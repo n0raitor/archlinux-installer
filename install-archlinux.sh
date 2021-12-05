@@ -100,6 +100,7 @@ func_check_internet_connection() {
 
 func_release_notes() {
 	echo "Welcome to ArchLinux-Installer by NormannatoR"
+	echo ""
 	sleep 1
 }
 
@@ -112,7 +113,9 @@ func_partitioning() {
 	separatehomedevice=""
 
 	echo "##### PARTITIONING #####"
+	echo ""
 	lsblk
+	echo ""
 	
 	# Set Root Device via input
 	read -p "Select the ROOT device to install archlinux base system to: " deviceRoot
@@ -120,7 +123,7 @@ func_partitioning() {
 	# Separate Home Partition Device?
 	
 	while true; do
-    		read -p "Do you wish to use a separate device for your home directory? (This option will use the entire memory on the device for the home partition. Make sure to backup your data on this device before typing YES" yn
+    		read -p "Do you wish to use a separate device for your home directory? (This option will use the entire memory on the device for the home partition. Make sure to backup your data on this device before typing YES [Y/N]" yn
     		case $yn in
 			[Yy]* ) separatehome=1; break;;
 			[Nn]* ) separatehome=0; break;;
@@ -135,15 +138,18 @@ func_partitioning() {
 		read -p "Select the device for your HOME-Directory: " separatehomedevice
 	fi
 	
+	echo ""
 	echo "!!!CAUTION!!!"
 	echo "Process Starts in 10 seconds. This process will create a new GPT Partition Table on the selected devices"
 	echo "Press Ctrl+C to exit"
+	echo ""
 	sleep 10
-	echo -n "Create Root Device..."
+	echo "Create Root Device..."
 	sgdisk -o /dev/$deviceRoot  # Create GPT Table
 	sgdisk -n 128:-200M: -t 128:ef00 /dev/$deviceRoot  # Create EFI / Boot Partition
 	sgdisk -n 1:: -t 1:8e00 /dev/$deviceRoot  # Create Linux LVM Partition
 	echo " done"
+	echo ""
 	
 	if [ $separatehome = 1 ]
 	then
@@ -151,6 +157,7 @@ func_partitioning() {
 		sgdisk -o /dev/$separatehomedevice  # Create GPT Table
 		sgdisk -n 1:: /dev/$separatehomedevice  # Create Linux LVM Partition
 		echo " done"
+		echo ""
 	fi
 	
 	### Create Encrypted Device ###
@@ -160,13 +167,13 @@ func_partitioning() {
 	echo "Enter The Password you set for your Root-Partition:"
 	cryptsetup open dev/${deviceRoot}1 cryptlvm
 	
-	echo -n "Create Physical Volume"
+	#echo -n "Create Physical Volume"
 	pvcreate /dev/mapper/cryptlvm
-	echo " done"
+	#echo " done"
 	
-	echo -n "Create Volume Group"
+	#echo -n "Create Volume Group"
 	vgcreate vg1 /dev/mapper/cryptlvm
-	echo " done"
+	#echo " done"
 	
 	read -p "How Much Swap Memory do you want to use? (in GB)" swapspace
 	echo -n "Creating Group Member..."
@@ -191,11 +198,15 @@ func_partitioning() {
 	echo -n "Mounting Partitions..."
 	mount /dev/vg1/root /mnt
 	mkdir /mnt/home
-	mount /dev/${separatehomedevice}1 /mnt/home
+	if [ $separatehome = 1 ]
+	then
+		mount /dev/${separatehomedevice}1 /mnt/home
+	fi
 	mkdir /mnt/boot
 	mount /dev/${deviceRoot}128 /mnt/boot
 	swapon /dev/vg1/swap
 	echo " done"
+	echo ""
 }
 
 func_gen_mirror_list() {
