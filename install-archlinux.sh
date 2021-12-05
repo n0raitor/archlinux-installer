@@ -391,7 +391,7 @@ func_post_arch_chroot_config() {
 }
 
 func_setup_arch_linux_root() {
-	
+	echo "func_setup_arch_linux_root TODO" # TODO
 }
 
 func_script_part2() {
