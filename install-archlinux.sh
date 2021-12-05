@@ -266,7 +266,7 @@ func_config_archlinux() {
 		match="#" & "$lang"
 		insert="$lang"
 		file="/mnt/etc/locale.gen"
-		sed -i "s/$match/$match\n$insert/" $file
+		sed -i "s/$match/$match$insert/" $file
 	done
 	
 	# Gererate fstab
@@ -360,6 +360,37 @@ func_post_arch_chroot_config() {
 	sleep 1
 	reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l $NUMBER_OF_MIRRORS -p https --sort rate --save /etc/pacman.d/mirrorlist
 	
+	# Manipulate MKINICPIO - TODO - Kritische Stelle bei einem ISO Update, im AUGE Behalten beim Testing
+	echo ""
+	echo -n "Edit Mkinitcpio... "
+	match='autodetect modconf block filesystems keyboard'
+	insert='autodetect keyboard keymap modconf block encrypt lvm2 filesystems '
+	file='/etc/mkinitcpio.conf'
+	sed -i "s/$match/$insert/" $file
+	echo " done"
+	mkinitcpio -p linux-lts
+	echo ""
+	
+	echo "### Config GRUB Bootloader ###"
+	pacman -S grub efibootmgr 
+	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+	UUID_root_partition=$(blkid -s UUID -o value /dev/mapper/vg1-root)  # Calc Block ID of Root Partition
+	echo ""
+	echo -n "Edit Grub Default File... "
+	match='GRUB_CMDLINE_LINUX=""'
+	insert='GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=\"' $ "$UUID_root_partition" & '\":cryptlvm root=/dev/vg1/root\"'
+	file='/etc/default/grub'
+	sed -i "s/$match/$insert/" $file
+	echo " done"
+	
+	grub-mkconfig -o /boot/grub/grub.cfg  # Generate Grub config file
+	
+	echo ""
+	echo "BASE SYSTEM INSTALLED and BASE CONFIG DONE"
+	echo ""
+}
+
+func_setup_arch_linux_root() {
 	
 }
 
@@ -370,6 +401,8 @@ func_script_part2() {
 	echo ""
 	# Post Arch-ChRoot Configuration and Generation
 	func_post_arch_chroot_config
+	
+	func_setup_arch_linux_root
 }
 
 
