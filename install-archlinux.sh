@@ -6,6 +6,12 @@
 #################################
 LOADKEY=de-latin1
 LOCAL_MIRROR_COUNTRY='Germany'
+HOSTNAME=myhost
+KEYMAP=de-latin1
+FONT=lat9w-16
+LANG=de_DE.UTF-8
+LOCALE=("de_DE.UTF-8 UTF-8" "de_DE ISO-8859-1" "de_DE@euro ISO-8859-15" "en_US.UTF-8")
+TIMEZONE=/usr/share/zoneinfo/Europe/Berlin
 
 
 #################################
@@ -222,12 +228,75 @@ func_install_base() {
 	echo "Note: The LTS-Kernal will get installed"
 	pacstrap /mnt base base-devel linux-lts linux-firmware nano vim dhcpcd lvm2 reflector
 	echo ""
-	echo "Installation of the Base System DONE
+	echo "Installation of the Base System DONE"
 	echo ""
 }
 
 func_config_archlinux() {
-	echo "TODO"
+	echo "##### Config ArchLinux #####"
+	echo ""
+	
+	# Set Computer Hostname
+	echo $HOSTNAME > /etc/hostname
+	 
+	# Set Keyboard Layout
+	echo KEYMAP=$KEYMAP > /etc/vconsole.conf  
+
+	# Set Font (optional)
+	echo FONT=$FONT >> /etc/vconsole.conf  
+
+	# Set Locale
+	echo LANG=$LANG > /etc/locale.conf  # Set Language
+	
+	# nano /etc/locale.gen
+	# -> uncomments this:
+	#de_DE.UTF-8 UTF-8
+	#de_DE ISO-8859-1
+	#de_DE@euro ISO-8859-15
+	#en_US.UTF-8
+	for lang in "${LOCALE}"
+	do
+		match="#" & $lang
+		insert=$lang
+		file="/etc/locale.gen"
+		sed -i "s/$match/$match\n$insert/" $file
+	done
+	
+	locale-gen
+
+	# Set Time
+	ln -sf $TIMEZONE /etc/localtime  # Set Timezone
+	hwclock --systohc --utc # Sync Hardware-Clock
+
+	# Set Root Password
+	echo ""
+	echo "Set your ROOT Password"
+	passwd root
+	exit
+	
+	# Gererate fstab
+	genfstab -U /mnt >> /mnt/etc/fstab  # (alt. change -U to -L to use Label instead of UUID
+	
+	echo ""
+	echo "The Generated fstab file:"
+	cat /mnt/etc/fstab  # check gen
+	read "(Press Enter to Continue)"
+
+	arch-chroot /mnt  # Switch Back to Root
+	
+	while true; do
+    		read -p "Do you wish to edit the fstab file (y/n)?" yn
+	    	case $yn in
+			[Yy]* ) nano /etc/fstab; break;;
+			[Nn]* ) break;;
+			* ) echo "Please answer yes or no.";;
+	    	esac
+	done
+	
+	echo "127.0.0.1		localhost.localdomain	localhost" >> /etc/hosts
+	echo "::1		localhost.localdomain	localhost" >> /etc/hosts
+	echo "127.0.0.1		$hostname.localdomain	$hostname" >> /etc/hosts
+	
 }
 
 #########################
