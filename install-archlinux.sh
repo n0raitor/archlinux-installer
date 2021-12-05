@@ -21,7 +21,7 @@ TIMEZONE=/usr/share/zoneinfo/Europe/Berlin
 
 func_prologue() {
 	# Are You Reads?
-	read -p "Hello, are you ready to install ArchLinux? (Press Enter)" ready
+	read -p "Hello, are you ready to install ArchLinux? (Press Enter) " ready
 	echo "Perfect!"
 	sleep 1
 	echo "Let's start"
@@ -53,7 +53,7 @@ func_connect_to_wifi() {
 
 func_internet_connection() {
 	connectWifi="-1"
-	read -p "Do you use a LAN or WIFI connection? (Type the Word)" connection
+	read -p "Do you use a LAN or WIFI connection? (Type the Word) " connection
 	case "$connection" in
 		LAN|lan|Lan) connectWifi="0"
 		;;
@@ -131,7 +131,7 @@ func_partitioning() {
 	# Separate Home Partition Device?
 	
 	while true; do
-    		read -p "Do you wish to use a separate device for your home directory? (This option will use the entire memory on the device for the home partition. Make sure to backup your data on this device before typing YES [Y/N]" yn
+    		read -p "Do you wish to use a separate device for your home directory? (This option will use the entire memory on the device for the home partition. Make sure to backup your data on this device before typing YES [Y/N] " yn
     		case $yn in
 			[Yy]* ) separatehome=1; break;;
 			[Nn]* ) separatehome=0; break;;
@@ -183,7 +183,7 @@ func_partitioning() {
 	vgcreate vg1 /dev/mapper/cryptlvm
 	#echo " done"
 	
-	read -p "How Much Swap Memory do you want to use? (in GB)" swapspace
+	read -p "How Much Swap Memory do you want to use? (in GB) " swapspace
 	echo -n "Creating Group Member..."
 	lvcreate -L ${swapspace}G vg1 -n swap
 	lvcreate -l 100%FREE vg1 -n root
@@ -281,12 +281,12 @@ func_config_archlinux() {
 	echo ""
 	echo "The Generated fstab file:"
 	cat /mnt/etc/fstab  # check gen
-	read "(Press Enter to Continue)"
+	read "(Press Enter to Continue) "
 
 	arch-chroot /mnt  # Switch Back to Root
 	
 	while true; do
-    		read -p "Do you wish to edit the fstab file (y/n)?" yn
+    		read -p "Do you wish to edit the fstab file (y/n)? " yn
 	    	case $yn in
 			[Yy]* ) nano /etc/fstab; break;;
 			[Nn]* ) break;;
