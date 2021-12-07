@@ -275,7 +275,7 @@ func_config_archlinux() {
 	echo ""
 	echo "The Generated fstab file:"
 	cat /mnt/etc/fstab  # check gen
-	read "(Press Enter to Continue) "
+	read -p "(Press Enter to Continue) " ready
 	
 	while true; do
     		read -p "Do you wish to edit the fstab file (y/n)? " yn
