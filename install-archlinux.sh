@@ -121,7 +121,7 @@ func_check_internet_connection() {
 
 func_release_notes() {
 	echo "Welcome to ArchLinux-Installer by N0Raitor"
-	echo "Version: $RELEASE_VERSION"
+	echo "Version: " & "$RELEASE_VERSION"
 	echo ""
 	sleep 1
 }
