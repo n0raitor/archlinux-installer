@@ -121,7 +121,7 @@ func_check_internet_connection() {
 
 func_release_notes() {
 	echo "Welcome to ArchLinux-Installer by N0Raitor"
-	echo "Version: " & "$RELEASE_VERSION"
+	echo "Version: ${RELEASE_VERSION}"
 	echo ""
 	sleep 1
 }
@@ -277,7 +277,7 @@ func_config_archlinux() {
 	#en_US.UTF-8
 	for lang in "${LOCALE}"
 	do
-		match="#" & "$lang"
+		match="#${lang}"
 		insert="$lang"
 		file="/mnt/etc/locale.gen"
 		sed -i "s/$match/$insert/" $file
