@@ -13,7 +13,7 @@ HOSTNAME=myhost
 KEYMAP=de-latin1
 FONT=lat9w-16
 LANG=de_DE.UTF-8
-LOCALE=("de_DE.UTF-8 UTF-8" "de_DE ISO-8859-1" "de_DE@euro ISO-8859-15" "en_US.UTF-8")
+declare -a LOCALE=("de_DE.UTF-8 UTF-8" "de_DE ISO-8859-1" "de_DE@euro ISO-8859-15" "en_US.UTF-8")
 TIMEZONE=/usr/share/zoneinfo/Europe/Berlin
 
 
@@ -275,7 +275,7 @@ func_config_archlinux() {
 	#de_DE ISO-8859-1
 	#de_DE@euro ISO-8859-15
 	#en_US.UTF-8
-	for lang in "${LOCALE}"
+	for lang in ${LOCALE[@]}
 	do
 		match="#${lang}"
 		insert="$lang"
