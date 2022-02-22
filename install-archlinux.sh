@@ -280,7 +280,7 @@ func_config_archlinux() {
 		match="#" & "$lang"
 		insert="$lang"
 		file="/mnt/etc/locale.gen"
-		sed -i "s/$match/$match$insert/" $file
+		sed -i "s/$match/$insert/" $file
 	done
 	
 	# Gererate fstab
