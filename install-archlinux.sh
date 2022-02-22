@@ -389,12 +389,13 @@ func_post_arch_chroot_config() {
 	pacman -S --noconfirm grub efibootmgr 
 	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 	UUID_root_partition=$(blkid -s UUID -o value /dev/mapper/vg1-root)  # Calc Block ID of Root Partition
+	echo "UUID OF vg1-root: ${UUID_root_partition}"
 	echo ""
 	echo -n "Edit Grub Default File... "
-	match="GRUB_CMDLINE_LINUX=\"\""
-	insert="GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=\"${UUID_root_partition}\":cryptlvm root=/dev/vg1/root\""
-	file="/etc/default/grub"
-	sed -i "s/$match/$insert/" $file
+	match_GRUB="GRUB_CMDLINE_LINUX=\"\""
+	insert_GRUB="GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=\"${UUID_root_partition}\":cryptlvm root=/dev/vg1/root\""
+	file_GRUB="/etc/default/grub"
+	sed -i "s/$match_GRUB/$insert_GRUB/" $file_GRUB
 	echo " done"
 	
 	grub-mkconfig -o /boot/grub/grub.cfg  # Generate Grub config file
