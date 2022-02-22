@@ -377,9 +377,9 @@ func_post_arch_chroot_config() {
 	# Manipulate MKINICPIO - TODO - Kritische Stelle bei einem ISO Update, im AUGE Behalten beim Testing
 	echo ""
 	echo -n "Edit Mkinitcpio... "
-	match='autodetect modconf block filesystems keyboard'
-	insert='autodetect keyboard keymap modconf block encrypt lvm2 filesystems '
-	file='/etc/mkinitcpio.conf'
+	match="block filesystems keyboard"
+	insert="keyboard block encrypt lvm2 filesystems"
+	file="/etc/mkinitcpio.conf"
 	sed -i "s/$match/$insert/" $file
 	echo " done"
 	mkinitcpio -p linux-lts
@@ -393,7 +393,7 @@ func_post_arch_chroot_config() {
 	echo -n "Edit Grub Default File... "
 	match="GRUB_CMDLINE_LINUX=\"\""
 	insert="GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=\"${UUID_root_partition}\":cryptlvm root=/dev/vg1/root\""
-	file='/etc/default/grub'
+	file="/etc/default/grub"
 	sed -i "s/$match/$insert/" $file
 	echo " done"
 	
