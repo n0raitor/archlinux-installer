@@ -385,10 +385,13 @@ func_post_arch_chroot_config() {
 	mkinitcpio -p linux-lts
 	echo ""
 	
+	### GRUB ###
 	echo "### Config GRUB Bootloader ###"
 	pacman -S --noconfirm grub efibootmgr 
 	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+
 	UUID_root_partition=$(blkid -s UUID -o value /dev/mapper/vg1-root)  # Calc Block ID of Root Partition
+
 	echo "UUID OF vg1-root: ${UUID_root_partition}"
 	echo ""
 	echo -n "Edit Grub Default File... "
