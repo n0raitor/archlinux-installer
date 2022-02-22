@@ -385,6 +385,7 @@ func_post_arch_chroot_config() {
 	mkinitcpio -p linux-lts
 	echo ""
 	
+	
 	### GRUB ###
 	echo "### Config GRUB Bootloader ###"
 	pacman -S --noconfirm grub efibootmgr 
