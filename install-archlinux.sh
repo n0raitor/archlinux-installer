@@ -127,7 +127,7 @@ func_release_notes() {
 }
 
 func_partitioning() {
-# Creating Partitions, LVM, Formating, Mounting
+	# Creating Partitions, LVM, Formating, Mounting
 
 	# Variables
 	deviceRoot=""
@@ -142,9 +142,9 @@ func_partitioning() {
 	
 	# Set Root Device via input
 	read -p "Select the ROOT device to install archlinux base system to: " deviceRoot
-	
+	echo ""
+
 	# Separate Home Partition Device?
-	
 	while true; do
     		read -p "Do you wish to use a separate device for your home directory? (This option will use the entire memory on the device for the home partition. Make sure to backup your data on this device before typing YES [Y/N] " yn
     		case $yn in
@@ -165,7 +165,6 @@ func_partitioning() {
 	echo "!!!CAUTION!!!"
 	echo "Process Starts in 10 seconds. This process will create a new GPT Partition Table on the selected devices"
 	echo "Press Ctrl+C to exit"
-	echo ""
 	sleep 10
 	echo "Create Root Device..."
 	sgdisk -o /dev/$deviceRoot  # Create GPT Table
@@ -178,7 +177,7 @@ func_partitioning() {
 	then
 		echo -n "Create Home Device..."
 		sgdisk -o /dev/$separatehomedevice  # Create GPT Table
-		sgdisk -n 1:: /dev/$separatehomedevice  # Create Linux LVM Partition
+		sgdisk -n 1:: /dev/$separatehomedevice  # Create Linux ext4 Partition
 		echo " done"
 		echo ""
 	fi
@@ -187,6 +186,7 @@ func_partitioning() {
 	echo "Set up Encryption..."
 	cryptsetup luksFormat /dev/${deviceRoot}1
 	echo "Encrypting Root Partition... done"
+	echo ""
 	echo "Enter The Password you set for your Root-Partition:"
 	cryptsetup open /dev/${deviceRoot}1 cryptlvm
 	
@@ -198,6 +198,9 @@ func_partitioning() {
 	vgcreate vg1 /dev/mapper/cryptlvm
 	#echo " done"
 	
+	echo ""
+
+	# SWAP
 	read -p "How Much Swap Memory do you want to use? (in GB) " swapspace
 	echo -n "Creating Group Member..."
 	lvcreate -L ${swapspace}G vg1 -n swap
