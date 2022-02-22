@@ -110,7 +110,7 @@ func_check_internet_connection() {
 }
 
 func_release_notes() {
-	echo "Welcome to ArchLinux-Installer by NormannatoR"
+	echo "Welcome to ArchLinux-Installer by N0Raitor"
 	echo ""
 	sleep 1
 }
@@ -292,7 +292,7 @@ func_config_archlinux() {
 }
 
 func_script_part1() {
-	echo "Welcome to ArchLinux-Installer by NormannatoR"
+	echo "Welcome to ArchLinux-Installer by N0Raitor"
 	sleep 1
 
 	### Prologue ###
@@ -407,7 +407,6 @@ func_script_part2() {
 
 
 arch-chroot /mnt  # Switch Back to Root
-
 
 
 #########################
