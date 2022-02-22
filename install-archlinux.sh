@@ -4,6 +4,8 @@
 ######### CONFIGURATION #########
 ##### (Later in Config File) ####
 #################################
+RELEASE_VERSION = "Private Alpha"
+
 LOADKEY=de-latin1
 LOCAL_MIRROR_COUNTRY='Germany'
 NUMBER_OF_MIRRORS=20
@@ -25,21 +27,25 @@ TIMEZONE=/usr/share/zoneinfo/Europe/Berlin
 
 func_prologue() {
 	# Are You Reads?
+
 	read -p "Hello, are you ready to install ArchLinux? (Press Enter) " ready
 	echo "Perfect!"
 	sleep 1
 	echo "Let's start"
 	sleep 1
-
 }
 
 func_loadkeys() {
+	# Set Charset for Keyboard-Input
+
 	echo -n "LoadKeys..."
 	loadkeys $LOADKEY
 	echo " done"
 }
 
 func_connect_to_wifi() {
+	# Helps to connect to a WIFI Hotspot
+
 	#echo ""
 	#echo -n "Scanning Network Device..."
 	#iwctl
@@ -51,11 +57,13 @@ func_connect_to_wifi() {
 	#iwctl
 	echo "Interactive Dialog not implemented yet"
 	echo "Opening iwctl (WIFI Connector Program)..."
+	echo "HINT: Press Help for an Introduction"
 	iwctl
-	help
 }
 
 func_internet_connection() {
+	# Asks, if LAN or WIFI is suggested and loads the specific module
+
 	connectWifi="-1"
 	read -p "Do you use a LAN or WIFI connection? (Type the Word) " connection
 	case "$connection" in
@@ -80,6 +88,8 @@ func_internet_connection() {
 }
 
 func_check_internet_connection() {
+	# Checks, if an internet connection is available
+
 	if ping -q -c 1 -W 1 8.8.8.8 >/dev/null; then
 	  	echo "IPv4 is up"
 	else
@@ -111,6 +121,7 @@ func_check_internet_connection() {
 
 func_release_notes() {
 	echo "Welcome to ArchLinux-Installer by N0Raitor"
+	echo "Version: $RELEASE_VERSION"
 	echo ""
 	sleep 1
 }
