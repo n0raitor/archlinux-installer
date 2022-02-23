@@ -121,7 +121,7 @@ func_check_internet_connection() {
 
 func_release_notes() {
 	echo "Welcome to ArchLinux-Installer by N0Raitor"
-	echo "Version: ${RELEASE_VERSION}"
+	echo "Version: $RELEASE_VERSION"
 	echo ""
 	sleep 1
 }
@@ -413,6 +413,12 @@ func_setup_arch_linux_root() {
 	echo "func_setup_arch_linux_root TODO" # TODO
 }
 
+func_leave_arch_chroot() {
+	exit
+	umount -a
+	reboot
+}
+
 func_script_part2() {
 	echo "#####################################################"
 	echo "#  Arch Linux Base System - Arch-ChRoot Post Script #"
@@ -422,6 +428,8 @@ func_script_part2() {
 	func_post_arch_chroot_config
 	
 	func_setup_arch_linux_root
+
+	func_leave_arch_chroot
 }
 
 
