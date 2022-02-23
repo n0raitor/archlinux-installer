@@ -15,6 +15,8 @@ If you like to use a Desktop Environment during the installation, I created a Li
 
 2. Run the Script 
 ```bash
+pacman -Sy
+pacman -S git
 git clone https://github.com/n0raitor/archlinux-installer.git && cd archlinux-installer && ./install-archlinux.sh
 ```
 
