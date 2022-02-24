@@ -397,7 +397,8 @@ func_post_arch_chroot_config() {
 	echo ""
 	echo -n "Edit Grub Default File... "
 	match_GRUB="GRUB_CMDLINE_LINUX=\"\""
-	insert_GRUB="GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=\"${UUID_root_partition}\":cryptlvm root=/dev/vg1/root\""
+	insert_GRUB="GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=\"$UUID_root_partition\":cryptlvm root=/dev/vg1/root\""
+	echo $insert_GRUB
 	file_GRUB="/etc/default/grub"
 	sed -i "s/$match_GRUB/$insert_GRUB/" $file_GRUB
 	echo " done"
