@@ -1,3 +1,3 @@
 #!/bin/bash
 
-pacman -S gimp gimp-help-de
+pacman -S gimp gimp-help-de gimp-help-en
