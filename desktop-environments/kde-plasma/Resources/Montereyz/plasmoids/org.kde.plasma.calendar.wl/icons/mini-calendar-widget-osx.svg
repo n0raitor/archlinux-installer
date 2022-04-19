@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="Calendar" style="image-rendering:optimizeSpeed" width="48" height="48" enable-background="new 0 0 1024 1024" version="1.1">
+ <defs id="defs17">
+  <linearGradient id="a">
+   <stop id="stop2" offset="0" stop-color="#e35e5e"/>
+   <stop id="stop4" offset="1" stop-color="#fa9381"/>
+  </linearGradient>
+  <linearGradient id="d" x1="280" x2="280" y1="4" y2="1024" gradientTransform="matrix(0.04586061,0.00863195,-0.00858767,0.04562536,5.0840062,-3.7191536)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+  <linearGradient id="c" x1="422" x2="884.67" y1="166.12" y2="166.12" gradientTransform="translate(0.40309,1.1823)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+  <linearGradient id="b" x1="520" x2="520" y1="4" y2="1024" gradientTransform="matrix(0.04670912,0,0,0.04671117,4.1100269,-4.7688954)" gradientUnits="userSpaceOnUse">
+   <stop id="stop9" offset="0" stop-color="#d7d7d7"/>
+   <stop id="stop11" offset="1" stop-color="#fff"/>
+  </linearGradient>
+  <filter id="e" style="color-interpolation-filters:sRGB" width="1.072" height="1.072" x="-.04" y="-.04">
+   <feGaussianBlur id="feGaussianBlur14" stdDeviation="14.075"/>
+  </filter>
+ </defs>
+ <circle id="ellipse921" style="opacity:0.05;fill:#000000;stroke-width:0.76664597;paint-order:stroke markers fill" cx="28.025" cy="19.146" r="23" transform="rotate(10.659587)"/>
+ <circle id="ellipse923" style="opacity:0.05;fill:#000000;stroke-width:0.74997973;paint-order:stroke markers fill" cx="28.025" cy="19.146" r="22.5" transform="rotate(10.659587)"/>
+ <circle id="ellipse21" style="fill:url(#b);stroke-width:0.73331356;paint-order:stroke markers fill" cx="28.025" cy="19.146" r="22" transform="rotate(10.659587)"/>
+ <path id="path23" style="fill:url(#d);stroke-width:0.72979552" d="M 24.142578 2.0078125 A 21.999998 22.000069 10.659587 0 0 22.724609 2.0585938 C 22.518529 2.0663241 22.31848 2.0756672 22.085938 2.0859375 A 21.999998 22.000069 10.659587 0 0 4.4199219 14 L 43.582031 14 A 21.999998 22.000069 10.659587 0 0 28.070312 2.3789062 A 21.999998 22.000069 10.659587 0 0 24.53125 2.015625 C 24.462347 2.0150807 24.209707 2.0080255 24.158203 2.0078125 A 21.999998 22.000069 10.659587 0 0 24.142578 2.0078125 z"/>
+</svg>

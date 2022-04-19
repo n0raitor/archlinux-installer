@@ -44,3 +44,13 @@ pacman -S kvantum
 echo "INIT CONFIG DONE"
 sleep 3
 
+echo "Appearance "
+echo "-> Global Theme:"
+echo "- Get New Global Theme: Monterey kde theme + dark"
+echo "-> Application:"
+echo "- Configure GNOME/GTK Application Style -> Get New..."
+echo "-- colloid gtk theme: (Colloid-light)"
+echo "Rename Theme (in ~/.themes) to Colloid-light-00, reopen the get new.. and select Colloid-dark, then remove the -00 you just renamed"
+
+read -p "Configure like described and press ENTER to continue"
+
