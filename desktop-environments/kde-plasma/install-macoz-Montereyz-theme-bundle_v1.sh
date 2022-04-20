@@ -99,3 +99,37 @@ echo "Themes and Icons are configured"
 sleep 3
 
 # ULauncher
+yay -S ulauncher
+ulauncher &
+mkdir -p ~/.config/ulauncher/user-themes
+cp -r Resources/Montereyz/Ulauncher-Theme/* ~/.config/ulauncher/user-themes/
+read -p "Go to Settings of ULauncher and Choose Plasma-Monterey-Light theme, choose \"Launch at Login\" and Press ENTER to continue"
+echo "ULauncher Done"
+sleep 3
+
+# Plasmoids
+cp -r Resources/Montereyz/plasmoids/ ~/.local/share/plasma
+echo "Right Click on Desktop and Press \"Add Widget\""
+echo "Check: Select: Get New Widget:"
+echo "Select As Filter: Instead of All, Installed"
+echo "Now you should see all of the installed widgets"
+read -p "Press ENTER to continue"
+
+yay -S plasma5-applets-window-buttons
+yay -S plasma5-applets-window-appmenu
+
+# Latte-Dock
+pacman -S latte-dock
+echo "Open Latte Dock, press Right Key on it and select Edit Layout Profile"
+echo "Import this config: ./Resources/Montereyz/Latte-Dock-Config/....latte"
+echo "Press Switch to make the changes appear"
+read -p "Press ENTER to continue"
+
+read -p "One Icon on the Latte Dock should be transparend, right click on it and click configure...  Set the Icon to: ./Resources/Montereyz/Icon-Launchpad/launchpad.png. Click ENTER to continue."
+
+read -p "If you like, you can now disable \"show hidden files\" in dolphin. Last but not least, you can now remove the bottom panel (default plasma panel). Press ENTER to continue"
+
+echo "If you'd like to use the WhiteSur Firefox Theme, feel free to follow the installation instructions on https://github.com/vinceliuice/WhiteSur-gtk-theme"
+sleep 10
+
+read -p "If you would like to go any further, feel free to do some tweaks like done in this video: https://youtu.be/y4yPm9s3KVg?t=1398   Press ENTER to Finish"
