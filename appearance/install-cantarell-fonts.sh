@@ -1,3 +1,3 @@
 #!/bin/bash
 
-yay -S cantarell-fonts
+yay -S cantarell-fonts  # gegf. pacman?

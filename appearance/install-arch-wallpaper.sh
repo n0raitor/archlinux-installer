@@ -1,3 +1,4 @@
 #!/bin/bash
 
-pacman -S archlinux-wallpaper
+yay -S arch-logo-dark-wallpapers
+yay -S arch-linux-2d-wallpapers

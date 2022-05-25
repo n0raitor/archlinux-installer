@@ -5,5 +5,5 @@ Name=Ghidra
 Comment=The Ghidra Software Reverse Engineering (SRE) Suite
 Path=/opt/ghidra
 Exec=/opt/ghidra/ghidraRun
-Icon=~/.local/share/applications/ghidra.desktop
+Icon=~/.local/share/ghidra/GHIDRA.svg
 Terminal=false
