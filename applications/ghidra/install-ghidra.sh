@@ -2,9 +2,13 @@
 
 pacman -S ghidra
 
-mkdir /home/$USER/.local/share/ghidra
-cp GHIDRA.svg /home/$USER/.local/share/ghidra/
-cp ghidra.desktop /home/$USER/.local/share/applications/
-
-chmod 644 /home/$USER/.local/share/ghidra/GHIDRA.svg
-chmod 744 /home/$USER/.local/share/applications/ghidra.desktop
+# Prepare Ghidra
+mkdir -p ~/.local/share/ghidra
+cp ../resources/ghidra/GHIDRA.svg ~/.local/share/ghidra/
+cp ../resources/ghidra/ghidra.desktop ~/.local/share/applications/
+chown $USER ~/.local/share/ghidra/GHIDRA.svg
+chown $USER ~/.local/share/applications/ghidra.desktop
+sudo chgrp users ~/.local/share/ghidra/GHIDRA.svg
+sudo chgrp users ~/.local/share/applications/ghidra.desktop
+chmod 644 ~/.local/share/ghidra/GHIDRA.svg
+chmod 744 ~/.local/share/applications/ghidra.desktop
