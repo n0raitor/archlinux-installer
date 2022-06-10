@@ -4,8 +4,8 @@ pacman -S ghidra
 
 # Prepare Ghidra
 mkdir -p ~/.local/share/ghidra
-cp ../resources/ghidra/GHIDRA.svg ~/.local/share/ghidra/
-cp ../resources/ghidra/ghidra.desktop ~/.local/share/applications/
+cp GHIDRA.svg ~/.local/share/ghidra/
+cp ghidra.desktop ~/.local/share/applications/
 chown $USER ~/.local/share/ghidra/GHIDRA.svg
 chown $USER ~/.local/share/applications/ghidra.desktop
 sudo chgrp users ~/.local/share/ghidra/GHIDRA.svg
