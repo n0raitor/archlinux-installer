@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo pacman -S gnome-keyring  # Required Dependency, otherwise Login will fail
+sudo pacman -S -needed gnome-keyring  # Required Dependency, otherwise Login will fail
 
 yay -S protonmail-bridge-bin
 
