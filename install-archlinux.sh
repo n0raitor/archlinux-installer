@@ -252,7 +252,7 @@ func_gen_mirror_list() {
 
 func_install_base() {
 	echo -n "Installing Base System "
-	pacstrap /mnt base base-devel linux-lts linux linux-headers linux-lts-headers linux-firmware nano dhcpcd lvm2 reflector git &>> $logfile
+	pacstrap /mnt base base-devel linux-lts linux linux-headers linux-lts-headers linux-firmware nano dhcpcd lvm2 reflector git # &>> $logfile
 	echo "[OK]"
 }
 
