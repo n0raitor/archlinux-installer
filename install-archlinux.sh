@@ -251,7 +251,7 @@ func_gen_mirror_list() {
 
 func_install_base() {
 	echo "Installing Base System "
-	pacstrap /mnt base base-devel linux-lts linux linux-headers linux-lts-headers linux-firmware nano dhcpcd lvm2 reflector git grub efibootmgr # &>> $logfile
+	pacstrap --noconfirm --needed /mnt base base-devel linux-lts linux linux-headers linux-lts-headers linux-firmware nano dhcpcd lvm2 reflector git grub efibootmgr # &>> $logfile
 }
 
 func_config_archlinux() {
