@@ -13,7 +13,7 @@ If you like to use a Desktop Environment during the installation, I created a Li
 
 1. Use the the Live-ISO above or the regarding ISO from the official [ArchLinux Website](https://archlinux.org/download/)
 
-2. Run the Script 
+2. Run the Script (you can also predownload the script)
 ```bash
 loadkeys de  # Or your keyboard layout
 pacman -Sy
