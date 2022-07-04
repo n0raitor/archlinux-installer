@@ -252,7 +252,7 @@ func_gen_mirror_list() {
 
 func_install_base() {
 	echo -n "Installing Base System "
-	pacstrap /mnt base base-devel linux-lts linux linux-headers linux-lts-headers linux-firmware nano dhcpcd lvm2 reflector git # &>> $logfile
+	pacstrap /mnt base base-devel linux-lts linux linux-headers linux-lts-headers linux-firmware nano dhcpcd lvm2 reflector git grub efibootmgr # &>> $logfile
 	echo "[OK]"
 }
 
@@ -399,7 +399,7 @@ func_post_arch_chroot_config() {
 	
 	### GRUB ###
 	echo -n "Config GRUB Bootloader "
-	pacman -S --noconfirm grub efibootmgr
+	#pacman -S --noconfirm grub efibootmgr
 	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 	
 	rootdevice=$(cat /mnt/root/device.info)
