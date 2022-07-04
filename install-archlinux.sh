@@ -191,12 +191,12 @@ func_partitioning() {
 	#fi
 	
 	### Create Encrypted Device ###
-	echo -n "Set up root partition encryption on \"/dev/${deviceRoot}1\""
+	echo "Set up root partition encryption on \"/dev/${deviceRoot}1\""
 	echo "Enter A Password for your Root-Partition:"
-	cryptsetup luksFormat /dev/${deviceRoot}1 &>> $logfile
+	cryptsetup luksFormat /dev/${deviceRoot}1 
 	
 	echo "Enter The Password you set for your Root-Partition:"
-	cryptsetup open /dev/${deviceRoot}1 cryptlvm &>> $logfile
+	cryptsetup open /dev/${deviceRoot}1 cryptlvm 
 
 	echo -n "Set up Volume Group "
 	
