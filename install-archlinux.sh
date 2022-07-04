@@ -4,7 +4,7 @@
 ######### CONFIGURATION #########
 ##### (Later in Config File) ####
 #################################
-RELEASE_VERSION = "Private Alpha"
+RELEASE_VERSION = "0.2.0 Private Alpha"
 
 LOADKEY=de-latin1
 LOCAL_MIRROR_COUNTRY='Germany'
@@ -16,6 +16,7 @@ LANG=de_DE.UTF-8
 declare -a LOCALE=("de_DE.UTF-8 UTF-8" "de_DE ISO-8859-1" "de_DE@euro ISO-8859-15" "en_US.UTF-8")
 TIMEZONE=/usr/share/zoneinfo/Europe/Berlin
 
+logfile="archinstall.log"
 
 #################################
 ##### Function Definitions ######
@@ -28,7 +29,7 @@ TIMEZONE=/usr/share/zoneinfo/Europe/Berlin
 func_prologue() {
 	# Are You Reads?
 
-	read -p "Hello, are you ready to install ArchLinux? (Press Enter) " ready
+	read -p "Hello, are you ready to install ArchLinux - N0Raitor Editon? (Press Enter) " ready
 	echo "Perfect!"
 	sleep 1
 	echo "Let's start"
@@ -38,9 +39,13 @@ func_prologue() {
 func_loadkeys() {
 	# Set Charset for Keyboard-Input
 
-	echo -n "LoadKeys..."
+	echo -n "LoadKeys \"$LOADKEY\" "
 	loadkeys $LOADKEY
-	echo " done"
+	echo "[OK]"
+}
+
+func_connect_to_lan() {
+	echo "Connection To LAN TODO!"
 }
 
 func_connect_to_wifi() {
@@ -57,7 +62,7 @@ func_connect_to_wifi() {
 	#iwctl
 	echo "Interactive Dialog not implemented yet"
 	echo "Opening iwctl (WIFI Connector Program)..."
-	echo "HINT: Press Help for an Introduction"
+	echo "HINT: Press \"Help\" for an Introduction"
 	iwctl
 }
 
@@ -65,7 +70,7 @@ func_internet_connection() {
 	# Asks, if LAN or WIFI is suggested and loads the specific module
 
 	connectWifi="-1"
-	read -p "Do you use a LAN or WIFI connection? (Type the Word) " connection
+	read -p "Do you wish to use a LAN or WIFI connection? (Type the Word) " connection
 	case "$connection" in
 		LAN|lan|Lan) connectWifi="0"
 		;;
@@ -75,47 +80,51 @@ func_internet_connection() {
 
 	if [ $connectWifi == "-1" ]
 	then
-		echo "Wrong Input"
-		echo "Exiting..."
-		exit 1
+		echo "Wrong Input, Choosing LAN"
+		func_connect_to_lan
 		
 	elif [ $connectWifi == "1" ]
 	then
 		# Connect to WIFI
 		echo "Connecting to WIFI..."
 		func_connect_to_wifi
+	else
+		func_connect_to_lan
 	fi
 }
 
 func_check_internet_connection() {
 	# Checks, if an internet connection is available
 
+	echo -n "Checking IPv4 "
 	if ping -q -c 1 -W 1 8.8.8.8 >/dev/null; then
-	  	echo "IPv4 is up"
+	  	echo "[OK]"
 	else
-	  	echo "IPv4 is down"
+	  	echo "[ERROR]"
 	  	echo "Exiting..."
 	  	exit 1
 	fi
 
+	echo -n "Checking Network "
 	if ping -q -c 1 -W 1 google.com >/dev/null; then
-	  	echo "The network is up"
+	  	echo "[OK]"
 	else
-	  	echo "The network is down"
+	  	echo "[ERROR]"
 	  	echo "Exiting..."
 	  	exit 1
 	fi
 
+	echo -n "Checking HTTP connectivity "
 	case "$(curl -s --max-time 2 -I http://google.com | sed 's/^[^ ]*  *\([0-9]\).*/\1/; 1q')" in
-		[23])	echo "HTTP connectivity is up";;
-		5)    	echo "The web proxy won't let us through";;
-		*)    	echo "The network is down or very slow"
+		[23])	echo "[OK]";;
+		5)    	echo "[The web proxy won't let us through]";;
+		*)    	echo "[The network is down or very slow]"
 		   	echo "Exiting..."
 		   	exit 1
 		   	;;
 	esac
 
-	echo "You have an Internet Connection :D"
+	echo "Internet Connection Check successful"
 	sleep 1
 }
 
@@ -141,121 +150,113 @@ func_partitioning() {
 	echo ""
 	
 	# Set Root Device via input
-	read -p "Select the ROOT device to install archlinux base system to: " deviceRoot
+	read -p "Select the ROOT device from the output above to install archlinux base system to (e.g. sda): " deviceRoot
 	echo ""
 
 	# Separate Home Partition Device?
-	while true; do
-    		read -p "Do you wish to use a separate device for your home directory? (This option will use the entire memory on the device for the home partition. Make sure to backup your data on this device before typing YES [Y/N] " yn
-    		case $yn in
-			[Yy]* ) separatehome=1; break;;
-			[Nn]* ) separatehome=0; break;;
-			* ) echo "Please answer yes or no.";;
-    		esac
-	done
+	#while true; do
+    #		read -p "Do you wish to use a separate device for your home directory? (This option will use the entire memory on the device for the home partition. Make sure to backup your data on this device before typing YES [Y/N] " yn
+    #		case $yn in
+	#		[Yy]* ) separatehome=1; break;;
+	#		[Nn]* ) separatehome=0; break;;
+	#		* ) echo "Please answer yes or no.";;
+    #		esac
+	#done
 	
-	if [ $separatehome == 1 ]
-	then
-		# Set Root Device via input
-		lsblk
-		read -p "Select the device for your HOME-Directory: " separatehomedevice
-	fi
+	#if [ $separatehome == 1 ]
+	#then
+	#	# Set Root Device via input
+	#	lsblk
+	#	read -p "Select the device for your HOME-Directory: " separatehomedevice
+	#fi
 	
-	echo ""
-	echo "!!!CAUTION!!!"
-	echo "Process Starts in 10 seconds. This process will create a new GPT Partition Table on the selected devices"
-	echo "Press Ctrl+C to exit"
-	sleep 10
-	echo "Create Root Device..."
-	sgdisk -o /dev/$deviceRoot  # Create GPT Table
-	sgdisk -n 128:-200M: -t 128:ef00 /dev/$deviceRoot  # Create EFI / Boot Partition
-	sgdisk -n 1:: -t 1:8e00 /dev/$deviceRoot  # Create Linux LVM Partition
-	echo " done"
-	echo ""
+	#echo ""
+	#echo "!!!CAUTION!!!"
+	#echo "Process Starts in 10 seconds. This process will create a new GPT Partition Table on the selected devices"
+	#echo "Press Ctrl+C to exit"
+	#sleep 10
+	echo -n "Create Root Device "
+	sgdisk -o /dev/$deviceRoot  &>> $logfile # Create GPT Table
+	sgdisk -n 128:-200M: -t 128:ef00 &>> $logfile /dev/$deviceRoot  # Create EFI / Boot Partition
+	sgdisk -n 1:: -t 1:8e00 /dev/$deviceRoot &>> $logfile # Create Linux LVM Partition
+	echo "[OK]"
 	
-	if [ $separatehome == 1 ]
-	then
-		echo -n "Create Home Device..."
-		sgdisk -o /dev/$separatehomedevice  # Create GPT Table
-		sgdisk -n 1:: /dev/$separatehomedevice  # Create Linux ext4 Partition
-		echo " done"
-		echo ""
-	fi
+	#if [ $separatehome == 1 ]
+	#then
+	#	echo -n "Create Home Device..."
+	#	sgdisk -o /dev/$separatehomedevice  # Create GPT Table
+	#	sgdisk -n 1:: /dev/$separatehomedevice  # Create Linux ext4 Partition
+	#	echo " done"
+	#	echo ""
+	#fi
 	
 	### Create Encrypted Device ###
-	echo "Set up Encryption..."
-	cryptsetup luksFormat /dev/${deviceRoot}1
-	echo "Encrypting Root Partition... done"
-	echo ""
+	echo -n "Set up root partition encryption on \"/dev/${deviceRoot}1\" "
+	cryptsetup luksFormat /dev/${deviceRoot}1 &>> $logfile
+	echo "[OK]"
 	echo "Enter The Password you set for your Root-Partition:"
-	cryptsetup open /dev/${deviceRoot}1 cryptlvm
+	cryptsetup open /dev/${deviceRoot}1 cryptlvm &>> $logfile
+
+	echo -n "Set up Volume Group "
 	
 	#echo -n "Create Physical Volume"
-	pvcreate /dev/mapper/cryptlvm
+	pvcreate /dev/mapper/cryptlvm &>> $logfile
 	#echo " done"
 	
 	#echo -n "Create Volume Group"
-	vgcreate vg1 /dev/mapper/cryptlvm
+	vgcreate vg1 /dev/mapper/cryptlvm &>> $logfile
 	#echo " done"
 	
-	echo ""
+	echo "[OK]"
 
 	# SWAP
 	read -p "How Much Swap Memory do you want to use? (in GB) " swapspace
-	echo -n "Creating Group Member..."
-	lvcreate -L ${swapspace}G vg1 -n swap
-	lvcreate -l 100%FREE vg1 -n root
-	echo " done"
+	echo -n "Creating Group Member "
+	lvcreate -L ${swapspace}G vg1 -n swap &>> $logfile
+	lvcreate -l 100%FREE vg1 -n root &>> $logfile
+	echo "[OK]"
 	
 	### Formating Partitions ###
-	echo -n "Formating Partitions..."
-	mkfs.fat -F32 /dev/sda128
-	mkfs.ext4 /dev/vg1/root
-	mkswap /dev/vg1/swap
+	echo -n "Formating Partitions "
+	mkfs.fat -F32 /dev/sda128 &>> $logfile
+	mkfs.ext4 /dev/vg1/root &>> $logfile
+	mkswap /dev/vg1/swap &>> $logfile
 	
-	if [ $separatehome == 1 ]
-	then
-		mkfs.ext4 /dev/${separatehomedevice}1
-	fi
+	#if [ $separatehome == 1 ]
+	#then
+	#	mkfs.ext4 /dev/${separatehomedevice}1
+	#fi
 	
-	echo " done"
+	echo "[OK]"
 	
 	### Mounting Partitions ###
-	echo -n "Mounting Partitions..."
-	mount /dev/vg1/root /mnt
-	mkdir /mnt/home
-	if [ $separatehome == 1 ]
-	then
-		mount /dev/${separatehomedevice}1 /mnt/home
-	fi
-	mkdir /mnt/boot
-	mount /dev/${deviceRoot}128 /mnt/boot
-	swapon /dev/vg1/swap
-	echo " done"
-	echo ""
+	echo -n "Mounting Partitions "
+	mount /dev/vg1/root /mnt &>> $logfile
+	mkdir /mnt/home &>> $logfile
+	#if [ $separatehome == 1 ]
+	#then
+	#	mount /dev/${separatehomedevice}1 /mnt/home
+	#fi
+	mkdir /mnt/boot &>> $logfile
+	mount /dev/${deviceRoot}128 /mnt/boot &>> $logfile
+	swapon /dev/vg1/swap &>> $logfile
+	echo "[OK]"
 }
 
 func_gen_mirror_list() {
-	echo ""
-	echo "### Gen Mirror List ###"
-	echo "Generating $NUMBER_OF_MIRRORS Mirror List Entries:"
-	sleep 1
-	reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l $NUMBER_OF_MIRRORS -p https --sort rate --save /etc/pacman.d/mirrorlist
-	echo ""
+	echo -n "Generating $NUMBER_OF_MIRRORS Mirror List Entries "
+	reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l $NUMBER_OF_MIRRORS -p https --sort rate --save /etc/pacman.d/mirrorlist &>> $logfile
+	echo "[OK]"
 }
 
 func_install_base() {
-	echo "##### Installing Base System #####"
-	echo "Note: The LTS-Kernal will get installed"
-	pacstrap /mnt base base-devel linux-lts linux-firmware nano vim dhcpcd lvm2 reflector
-	echo ""
-	echo "Installation of the Base System DONE"
-	echo ""
+	echo -n "Installing Base System "
+	pacstrap /mnt base base-devel linux-lts linux linux-headers linux-lts-headers linux-firmware nano dhcpcd lvm2 reflector git &>> $logfile
+	echo "[OK]"
 }
 
 func_config_archlinux() {
-	echo "##### Config ArchLinux #####"
-	echo ""
+	echo -n "Config ArchLinux "
 	
 	# Set Computer Hostname
 	echo $HOSTNAME > /mnt/etc/hostname
@@ -282,27 +283,32 @@ func_config_archlinux() {
 		file="/mnt/etc/locale.gen"
 		sed -i "s/$match/$insert/" $file
 	done
-	
+
+	echo "[OK]"
+
+	echo -n "Generate FSTAB file "
 	# Gererate fstab
 	genfstab -U /mnt >> /mnt/etc/fstab  # (alt. change -U to -L to use Label instead of UUID
 	
-	echo ""
-	echo "The Generated fstab file:"
-	cat /mnt/etc/fstab  # check gen
-	read -p "(Press Enter to Continue) " ready
+	echo "[OK]"
 	
-	while true; do
-    		read -p "Do you wish to edit the fstab file (y/n)? " yn
-	    	case $yn in
-			[Yy]* ) nano /mnt/etc/fstab; break;;
-			[Nn]* ) break;;
-			* ) echo "Please answer yes or no.";;
-	    	esac
-	done
+	cat /mnt/etc/fstab &>> $logfile  # check gen
+
+	#read -p "(Press Enter to Continue) " ready
 	
+	#while true; do
+    #		read -p "Do you wish to edit the fstab file (y/n)? " yn
+	#    	case $yn in
+	#		[Yy]* ) nano /mnt/etc/fstab; break;;
+	#		[Nn]* ) break;;
+	#		* ) echo "Please answer yes or no.";;
+	#    	esac
+	#done
+	echo -n "Edit hosts file "
 	echo "127.0.0.1		localhost.localdomain	localhost" >> /mnt/etc/hosts
 	echo "::1		localhost.localdomain	localhost" >> /mnt/etc/hosts
 	echo "127.0.0.1		$hostname.localdomain	$hostname" >> /mnt/etc/hosts
+	echo "[OK]"
 }
 
 func_script_part1() {
@@ -344,10 +350,12 @@ func_script_part1() {
 
 	### Copy Script to Root Dir on the ArchLinux Install
 	cp -v install-archlinux.sh /mnt/root/install-archlinux.sh
+	echo "${deviceRoot}" >> /mnt/root/device.info
 	# TODO -> Copy other Important / Urgent Files
 	
-	### Change To Root Directory (Arch-ChRoot) ###
-	echo "Changing to ArchLinux Root"
+	### Change To Root Directory (Arch-ChRoot) ### TODO
+	echo "Changing to ArchLinux Root and continue script (in 3 Seconds)"
+	sleep 3
 	arch-chroot /mnt /root/install-archlinux.sh continue
 	}
 
@@ -356,52 +364,54 @@ func_script_part1() {
 #########################
 
 func_post_arch_chroot_config() {
-	echo "### Post Config ###"
+	echo -n "Post Config in Arch-Chroot "
 	# Generate Locale
-	locale-gen  
+	locale-gen &>> $logfile
 	
 	# Set Time
-	ln -sf $TIMEZONE /etc/localtime  # Set Timezone
-	hwclock --systohc --utc # Sync Hardware-Clock
+	ln -sf $TIMEZONE /etc/localtime  &>> $logfile # Set Timezone
+	hwclock --systohc --utc &>> $logfile # Sync Hardware-Clock
 	
+	echo "[OK]"
+
 	# Set Root Password
-	echo ""
 	echo "Set your ROOT Password"
 	passwd root
 	
 	# Generate Mirror List for ArchLinux System
-	echo "Generating $NUMBER_OF_MIRRORS Mirror List Entries:"
-	sleep 1
-	reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l $NUMBER_OF_MIRRORS -p https --sort rate --save /etc/pacman.d/mirrorlist
-	
+	echo -n "Generating $NUMBER_OF_MIRRORS Mirror List Entries "
+	reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l $NUMBER_OF_MIRRORS -p https --sort rate --save /etc/pacman.d/mirrorlist &>> $logfile
+	echo "[OK]"
+
 	# Manipulate MKINICPIO - TODO - Kritische Stelle bei einem ISO Update, im AUGE Behalten beim Testing
-	echo ""
-	echo -n "Edit Mkinitcpio... "
-	match="block filesystems keyboard"
-	insert="keyboard block encrypt lvm2 filesystems"
+	echo -n "Edit Mkinitcpio "
+	match="block filesystems"
+	insert="block encrypt lvm2 filesystems"
 	file="/etc/mkinitcpio.conf"
 	sed -i "s/$match/$insert/" $file
-	echo " done"
-	mkinitcpio -p linux-lts
-	echo ""
+	echo "[OK]"
+	echo -n "Gen Mkinitcpio "
+	mkinitcpio -p linux-lts &>> $logfile
+	mkinitcpio -p linux &>> $logfile
+	echo "[OK]"
 	
 	
 	### GRUB ###
-	echo "### Config GRUB Bootloader ###"
-	pacman -S --noconfirm grub efibootmgr 
-	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+	echo -n "Config GRUB Bootloader "
+	pacman -S --noconfirm grub efibootmgr &>> $logfile
+	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB &>> $logfile
+	
+	rootdevice=$(cat device.info)
 
-	UUID_root_partition=$(blkid -s UUID -o value /dev/mapper/vg1-root)  # Calc Block ID of Root Partition
-
-	echo "UUID OF vg1-root: ${UUID_root_partition}"
-	echo ""
-	echo -n "Edit Grub Default File... "
-	match_GRUB="GRUB_CMDLINE_LINUX=\"\""
-	insert_GRUB="GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=\"$UUID_root_partition\":cryptlvm root=/dev/vg1/root\""
+	echo -n "Edit Grub Default File "
+	match_GRUB="GRUB_CMDLINE_LINUX_DEFAULT"
+	insert_GRUB="GRUB_CMDLINE_LINUX_DEFAULT=\"cryptdevice=/dev/${rootdevice}:cryptlvm:allow-discards loglevel=3\" # "
 	echo $insert_GRUB
 	file_GRUB="/etc/default/grub"
 	sed -i "s/$match_GRUB/$insert_GRUB/" $file_GRUB
 	echo " done"
+
+	# TODO Same with other default grub sections
 	
 	grub-mkconfig -o /boot/grub/grub.cfg  # Generate Grub config file
 	
