@@ -332,7 +332,7 @@ func_script_part1() {
 	func_release_notes
 
 	### Updating Database ###
-	pacman -Syyy &>> $logfile
+	pacman -Syyy 
 
 	### Preconfig ###
 	export EDITOR=nano
@@ -399,10 +399,11 @@ func_post_arch_chroot_config() {
 	
 	### GRUB ###
 	echo -n "Config GRUB Bootloader "
-	pacman -S --noconfirm grub efibootmgr &>> $logfile
-	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB &>> $logfile
+	pacman -S --noconfirm grub efibootmgr
+	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 	
-	rootdevice=$(cat device.info)
+	rootdevice=$(cat /mnt/root/device.info)
+	echo "${rootdevice}"
 
 	echo -n "Edit Grub Default File "
 	match_GRUB="GRUB_CMDLINE_LINUX_DEFAULT"
