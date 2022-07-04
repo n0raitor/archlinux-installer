@@ -245,15 +245,13 @@ func_partitioning() {
 }
 
 func_gen_mirror_list() {
-	echo -n "Generating $NUMBER_OF_MIRRORS Mirror List Entries "
-	reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l $NUMBER_OF_MIRRORS -p https --sort rate --save /etc/pacman.d/mirrorlist &>> $logfile
-	echo "[OK]"
+	echo "Generating $NUMBER_OF_MIRRORS Mirror List Entries:"
+	reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l $NUMBER_OF_MIRRORS -p https --sort rate --save /etc/pacman.d/mirrorlist 
 }
 
 func_install_base() {
-	echo -n "Installing Base System "
+	echo "Installing Base System "
 	pacstrap /mnt base base-devel linux-lts linux linux-headers linux-lts-headers linux-firmware nano dhcpcd lvm2 reflector git grub efibootmgr # &>> $logfile
-	echo "[OK]"
 }
 
 func_config_archlinux() {
@@ -380,9 +378,8 @@ func_post_arch_chroot_config() {
 	passwd root
 	
 	# Generate Mirror List for ArchLinux System
-	echo -n "Generating $NUMBER_OF_MIRRORS Mirror List Entries "
-	reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l $NUMBER_OF_MIRRORS -p https --sort rate --save /etc/pacman.d/mirrorlist &>> $logfile
-	echo "[OK]"
+	echo "Generating $NUMBER_OF_MIRRORS Mirror List Entries: "
+	reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l $NUMBER_OF_MIRRORS -p https --sort rate --save /etc/pacman.d/mirrorlist
 
 	# Manipulate MKINICPIO - TODO - Kritische Stelle bei einem ISO Update, im AUGE Behalten beim Testing
 	echo -n "Edit Mkinitcpio "
@@ -391,15 +388,14 @@ func_post_arch_chroot_config() {
 	file="/etc/mkinitcpio.conf"
 	sed -i "s/$match/$insert/" $file
 	echo "[OK]"
-	echo -n "Gen Mkinitcpio "
-	mkinitcpio -p linux-lts &>> $logfile
-	mkinitcpio -p linux &>> $logfile
-	echo "[OK]"
+	echo "Gen Mkinitcpio "
+	mkinitcpio -p linux-lts
+	mkinitcpio -p linux
 	
 	
 	### GRUB ###
 	echo -n "Config GRUB Bootloader "
-	#pacman -S --noconfirm grub efibootmgr
+	pacman -S --noconfirm --needed grub efibootmgr
 	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 	
 	rootdevice=$(cat /mnt/root/device.info)
