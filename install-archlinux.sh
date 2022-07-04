@@ -4,7 +4,7 @@
 ######### CONFIGURATION #########
 ##### (Later in Config File) ####
 #################################
-RELEASE_VERSION = "0.2.0 Private Alpha"
+RELEASE_VERSION="0.2.0 Private Alpha"
 
 LOADKEY=de-latin1
 LOCAL_MIRROR_COUNTRY='Germany'
