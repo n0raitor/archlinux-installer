@@ -18,7 +18,7 @@ If you like to use a Desktop Environment during the installation, I created a Li
 loadkeys de  # Or your keyboard layout
 pacman -Sy
 pacman -S git
-git clone https://github.com/n0raitor/archlinux-installer.git && cd archlinux-installer && chmod +x install-archlinux.sh && ./install-archlinux.sh
+git clone https://github.com/n0raitor/archlinux-installer.git && cd archlinux-installer && chmod +x install-archlinux.sh && ./install-archlinux.sh Start
 ```
 
 3. Follow the Instruction
