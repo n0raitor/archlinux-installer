@@ -191,9 +191,10 @@ func_partitioning() {
 	#fi
 	
 	### Create Encrypted Device ###
-	echo -n "Set up root partition encryption on \"/dev/${deviceRoot}1\" "
+	echo -n "Set up root partition encryption on \"/dev/${deviceRoot}1\""
+	echo "Enter A Password for your Root-Partition:"
 	cryptsetup luksFormat /dev/${deviceRoot}1 &>> $logfile
-	echo "[OK]"
+	
 	echo "Enter The Password you set for your Root-Partition:"
 	cryptsetup open /dev/${deviceRoot}1 cryptlvm &>> $logfile
 
@@ -331,7 +332,7 @@ func_script_part1() {
 	func_release_notes
 
 	### Updating Database ###
-	pacman -Syyy
+	pacman -Syyy &>> $logfile
 
 	### Preconfig ###
 	export EDITOR=nano
