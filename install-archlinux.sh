@@ -246,7 +246,7 @@ func_partitioning() {
 
 func_gen_mirror_list() {
 	echo "Generating $NUMBER_OF_MIRRORS Mirror List Entries:"
-	reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l $NUMBER_OF_MIRRORS -p https --sort rate --save /etc/pacman.d/mirrorlist 
+	#reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l $NUMBER_OF_MIRRORS -p https --sort rate --save /etc/pacman.d/mirrorlist 
 }
 
 func_install_base() {
