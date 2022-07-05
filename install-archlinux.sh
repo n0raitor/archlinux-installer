@@ -251,7 +251,7 @@ func_gen_mirror_list() {
 
 func_install_base() {
 	echo "Installing Base System "
-	pacstrap /mnt base base-devel linux-lts linux-lts-headers linux-firmware nano dhcpcd lvm2 reflector git
+	pacstrap /mnt base base-devel linux linux-headers linux-firmware nano dhcpcd lvm2 reflector git
 }
 
 func_config_archlinux() {
@@ -399,7 +399,7 @@ func_post_arch_chroot_config() {
 	sed -i "s/$match/$insert/" $file
 	#echo "[OK]"
 	echo "Gen Mkinitcpio "
-	mkinitcpio -p linux-lts
+	mkinitcpio -p linux
 	
 	### GRUB ###
 	echo "Config GRUB Bootloader "
