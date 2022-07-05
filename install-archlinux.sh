@@ -39,9 +39,9 @@ func_prologue() {
 func_loadkeys() {
 	# Set Charset for Keyboard-Input
 
-	echo -n "LoadKeys \"$LOADKEY\" "
+	echo "LoadKeys \"$LOADKEY\" "
 	loadkeys $LOADKEY
-	echo "[OK]"
+	#echo "[OK]"
 }
 
 func_connect_to_lan() {
@@ -175,11 +175,11 @@ func_partitioning() {
 	#echo "Process Starts in 10 seconds. This process will create a new GPT Partition Table on the selected devices"
 	#echo "Press Ctrl+C to exit"
 	#sleep 10
-	echo -n "Create Root Device "
+	echo "Create Root Device "
 	sgdisk -o /dev/$deviceRoot   # Create GPT Table
 	sgdisk -n 128:-200M: -t 128:ef00 /dev/$deviceRoot  # Create EFI / Boot Partition
 	sgdisk -n 1:: -t 1:8e00 /dev/$deviceRoot  # Create Linux LVM Partition
-	echo "[OK]"
+	#echo "[OK]"
 	
 	#if [ $separatehome == 1 ]
 	#then
@@ -198,7 +198,7 @@ func_partitioning() {
 	echo "Enter The Password you set for your Root-Partition:"
 	cryptsetup open /dev/${deviceRoot}1 cryptlvm 
 
-	echo -n "Set up Volume Group "
+	echo "Set up Volume Group "
 	
 	#echo -n "Create Physical Volume"
 	pvcreate /dev/mapper/cryptlvm 
@@ -208,17 +208,17 @@ func_partitioning() {
 	vgcreate vg1 /dev/mapper/cryptlvm 
 	#echo " done"
 	
-	echo "[OK]"
+	#echo "[OK]"
 
 	# SWAP
 	read -p "How Much Swap Memory do you want to use? (in GB) " swapspace
-	echo -n "Creating Group Member "
+	echo "Creating Group Member "
 	lvcreate -L ${swapspace}G vg1 -n swap 
 	lvcreate -l 100%FREE vg1 -n root 
-	echo "[OK]"
+	#echo "[OK]"
 	
 	### Formating Partitions ###
-	echo -n "Formating Partitions "
+	echo "Formating Partitions "
 	mkfs.fat -F32 /dev/sda128 
 	mkfs.ext4 /dev/vg1/root 
 	mkswap /dev/vg1/swap 
@@ -228,10 +228,10 @@ func_partitioning() {
 	#	mkfs.ext4 /dev/${separatehomedevice}1
 	#fi
 	
-	echo "[OK]"
+	#echo "[OK]"
 	
 	### Mounting Partitions ###
-	echo -n "Mounting Partitions "
+	echo "Mounting Partitions "
 	mount /dev/vg1/root /mnt 
 	mkdir /mnt/home 
 	#if [ $separatehome == 1 ]
@@ -241,7 +241,7 @@ func_partitioning() {
 	mkdir /mnt/boot 
 	mount /dev/${deviceRoot}128 /mnt/boot 
 	swapon /dev/vg1/swap 
-	echo "[OK]"
+	#echo "[OK]"
 }
 
 func_gen_mirror_list() {
@@ -255,7 +255,7 @@ func_install_base() {
 }
 
 func_config_archlinux() {
-	echo -n "Config ArchLinux "
+	echo "Config ArchLinux "
 	
 	# Set Computer Hostname
 	echo $HOSTNAME > /mnt/etc/hostname
@@ -283,13 +283,13 @@ func_config_archlinux() {
 		sed -i "s/$match/$insert/" $file
 	done
 
-	echo "[OK]"
+	#echo "[OK]"
 
-	echo -n "Generate FSTAB file "
+	echo "Generate FSTAB file "
 	# Gererate fstab
 	genfstab -U /mnt >> /mnt/etc/fstab  # (alt. change -U to -L to use Label instead of UUID
 	
-	echo "[OK]"
+	#echo "[OK]"
 	
 	cat /mnt/etc/fstab   # check gen
 
@@ -303,11 +303,11 @@ func_config_archlinux() {
 	#		* ) echo "Please answer yes or no.";;
 	#    	esac
 	#done
-	echo -n "Edit hosts file "
+	echo "Edit hosts file "
 	echo "127.0.0.1		localhost.localdomain	localhost" >> /mnt/etc/hosts
 	echo "::1		localhost.localdomain	localhost" >> /mnt/etc/hosts
 	echo "127.0.0.1		$hostname.localdomain	$hostname" >> /mnt/etc/hosts
-	echo "[OK]"
+	#echo "[OK]"
 }
 
 func_script_part1() {
@@ -373,7 +373,7 @@ func_script_part1() {
 #########################
 
 func_post_arch_chroot_config() {
-	echo -n "Post Config in Arch-Chroot "
+	echo "Post Config in Arch-Chroot "
 	# Generate Locale
 	locale-gen 
 	
@@ -381,7 +381,7 @@ func_post_arch_chroot_config() {
 	ln -sf $TIMEZONE /etc/localtime   # Set Timezone
 	hwclock --systohc --utc  # Sync Hardware-Clock
 	
-	echo "[OK]"
+	#echo "[OK]"
 
 	# Set Root Password
 	echo "Set your ROOT Password"
@@ -392,30 +392,30 @@ func_post_arch_chroot_config() {
 	reflector --verbose --country $LOCAL_MIRROR_COUNTRY -l $NUMBER_OF_MIRRORS -p https --sort rate --save /etc/pacman.d/mirrorlist
 
 	# Manipulate MKINICPIO - TODO - Kritische Stelle bei einem ISO Update, im AUGE Behalten beim Testing
-	echo -n "Edit Mkinitcpio "
+	echo "Edit Mkinitcpio "
 	match="block filesystems"
 	insert="block encrypt lvm2 filesystems"
 	file="/etc/mkinitcpio.conf"
 	sed -i "s/$match/$insert/" $file
-	echo "[OK]"
+	#echo "[OK]"
 	echo "Gen Mkinitcpio "
 	mkinitcpio -p linux-lts
 	
 	### GRUB ###
-	echo -n "Config GRUB Bootloader "
+	echo "Config GRUB Bootloader "
 	pacman -Sy --noconfirm grub efibootmgr
 	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 	
 	rootdevice=$(cat /mnt/root/device.info)
 	echo "${rootdevice}"
 
-	echo -n "Edit Grub Default File "
+	echo "Edit Grub Default File "
 	match_GRUB="GRUB_CMDLINE_LINUX_DEFAULT"
 	insert_GRUB="GRUB_CMDLINE_LINUX_DEFAULT=\"cryptdevice=/dev/${rootdevice}:cryptlvm:allow-discards loglevel=3\" # "
 	echo $insert_GRUB
 	file_GRUB="/etc/default/grub"
 	sed -i "s/$match_GRUB/$insert_GRUB/" $file_GRUB
-	echo " done"
+	#echo " done"
 
 	# TODO Same with other default grub sections
 	
