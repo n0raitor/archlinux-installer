@@ -457,7 +457,7 @@ func_script_part2() {
 	func_leave_arch_chroot
 }
 
-set -ex
+#set -ex
 
 #########################
 ##### Main Methode ######
