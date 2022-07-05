@@ -251,7 +251,7 @@ func_gen_mirror_list() {
 
 func_install_base() {
 	echo "Installing Base System "
-	pacstrap --noconfirm --needed /mnt base base-devel linux-lts linux linux-headers linux-lts-headers linux-firmware nano dhcpcd lvm2 reflector git grub efibootmgr # &>> $logfile
+	pacstrap /mnt base base-devel linux-lts linux-lts-headers linux-firmware nano dhcpcd lvm2 reflector git
 }
 
 func_config_archlinux() {
@@ -348,14 +348,24 @@ func_script_part1() {
 	func_config_archlinux
 
 	### Copy Script to Root Dir on the ArchLinux Install
-	cp -v install-archlinux.sh /mnt/root/install-archlinux.sh
-	echo "${deviceRoot}" >> /mnt/root/device.info
+	cp -v $0 /mnt/install-archlinux.sh
+	echo "${deviceRoot}" >> /mnt/device.info
 	# TODO -> Copy other Important / Urgent Files
 	
 	### Change To Root Directory (Arch-ChRoot) ### TODO
 	echo "Changing to ArchLinux Root and continue script (in 3 Seconds)"
 	sleep 3
-	arch-chroot /mnt /root/install-archlinux.sh continue
+	arch-chroot /mnt ./install-archlinux.sh continue
+
+	if [ -f /mnt/install-archlinux.sh ]
+    then
+        echo 'ERROR: Something failed inside the chroot, not unmounting filesystems so you can investigate.'
+        echo 'Make sure you unmount everything before you try to run this script again.'
+    else
+        echo 'Unmounting filesystems'
+        func_reboot_arch
+        echo 'Done! Reboot system.'
+    fi
 	}
 
 #########################
@@ -424,7 +434,15 @@ func_setup_arch_linux_root() {
 
 func_leave_arch_chroot() {
 	exit
-	umount -a
+}
+
+func_reboot_arch() {
+	umount /mnt/boot 
+	umount /mnt
+	swapoff /dev/vg1/swap  
+	vgchange -an
+	cryptsetup luksClose cryptlvm
+	
 	reboot
 }
 
