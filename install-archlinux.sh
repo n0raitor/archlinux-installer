@@ -176,9 +176,9 @@ func_partitioning() {
 	#echo "Press Ctrl+C to exit"
 	#sleep 10
 	echo -n "Create Root Device "
-	sgdisk -o /dev/$deviceRoot  &>> $logfile # Create GPT Table
-	sgdisk -n 128:-200M: -t 128:ef00 &>> $logfile /dev/$deviceRoot  # Create EFI / Boot Partition
-	sgdisk -n 1:: -t 1:8e00 /dev/$deviceRoot &>> $logfile # Create Linux LVM Partition
+	sgdisk -o /dev/$deviceRoot   # Create GPT Table
+	sgdisk -n 128:-200M: -t 128:ef00 /dev/$deviceRoot  # Create EFI / Boot Partition
+	sgdisk -n 1:: -t 1:8e00 /dev/$deviceRoot  # Create Linux LVM Partition
 	echo "[OK]"
 	
 	#if [ $separatehome == 1 ]
@@ -201,11 +201,11 @@ func_partitioning() {
 	echo -n "Set up Volume Group "
 	
 	#echo -n "Create Physical Volume"
-	pvcreate /dev/mapper/cryptlvm &>> $logfile
+	pvcreate /dev/mapper/cryptlvm 
 	#echo " done"
 	
 	#echo -n "Create Volume Group"
-	vgcreate vg1 /dev/mapper/cryptlvm &>> $logfile
+	vgcreate vg1 /dev/mapper/cryptlvm 
 	#echo " done"
 	
 	echo "[OK]"
@@ -213,15 +213,15 @@ func_partitioning() {
 	# SWAP
 	read -p "How Much Swap Memory do you want to use? (in GB) " swapspace
 	echo -n "Creating Group Member "
-	lvcreate -L ${swapspace}G vg1 -n swap &>> $logfile
-	lvcreate -l 100%FREE vg1 -n root &>> $logfile
+	lvcreate -L ${swapspace}G vg1 -n swap 
+	lvcreate -l 100%FREE vg1 -n root 
 	echo "[OK]"
 	
 	### Formating Partitions ###
 	echo -n "Formating Partitions "
-	mkfs.fat -F32 /dev/sda128 &>> $logfile
-	mkfs.ext4 /dev/vg1/root &>> $logfile
-	mkswap /dev/vg1/swap &>> $logfile
+	mkfs.fat -F32 /dev/sda128 
+	mkfs.ext4 /dev/vg1/root 
+	mkswap /dev/vg1/swap 
 	
 	#if [ $separatehome == 1 ]
 	#then
@@ -232,15 +232,15 @@ func_partitioning() {
 	
 	### Mounting Partitions ###
 	echo -n "Mounting Partitions "
-	mount /dev/vg1/root /mnt &>> $logfile
-	mkdir /mnt/home &>> $logfile
+	mount /dev/vg1/root /mnt 
+	mkdir /mnt/home 
 	#if [ $separatehome == 1 ]
 	#then
 	#	mount /dev/${separatehomedevice}1 /mnt/home
 	#fi
-	mkdir /mnt/boot &>> $logfile
-	mount /dev/${deviceRoot}128 /mnt/boot &>> $logfile
-	swapon /dev/vg1/swap &>> $logfile
+	mkdir /mnt/boot 
+	mount /dev/${deviceRoot}128 /mnt/boot 
+	swapon /dev/vg1/swap 
 	echo "[OK]"
 }
 
@@ -291,7 +291,7 @@ func_config_archlinux() {
 	
 	echo "[OK]"
 	
-	cat /mnt/etc/fstab &>> $logfile  # check gen
+	cat /mnt/etc/fstab   # check gen
 
 	#read -p "(Press Enter to Continue) " ready
 	
@@ -375,11 +375,11 @@ func_script_part1() {
 func_post_arch_chroot_config() {
 	echo -n "Post Config in Arch-Chroot "
 	# Generate Locale
-	locale-gen &>> $logfile
+	locale-gen 
 	
 	# Set Time
-	ln -sf $TIMEZONE /etc/localtime  &>> $logfile # Set Timezone
-	hwclock --systohc --utc &>> $logfile # Sync Hardware-Clock
+	ln -sf $TIMEZONE /etc/localtime   # Set Timezone
+	hwclock --systohc --utc  # Sync Hardware-Clock
 	
 	echo "[OK]"
 
@@ -400,12 +400,10 @@ func_post_arch_chroot_config() {
 	echo "[OK]"
 	echo "Gen Mkinitcpio "
 	mkinitcpio -p linux-lts
-	mkinitcpio -p linux
-	
 	
 	### GRUB ###
 	echo -n "Config GRUB Bootloader "
-	pacman -S --noconfirm --needed grub efibootmgr
+	pacman -Sy --noconfirm grub efibootmgr
 	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 	
 	rootdevice=$(cat /mnt/root/device.info)
@@ -442,7 +440,7 @@ func_reboot_arch() {
 	swapoff /dev/vg1/swap  
 	vgchange -an
 	cryptsetup luksClose cryptlvm
-	
+
 	reboot
 }
 
@@ -459,9 +457,7 @@ func_script_part2() {
 	func_leave_arch_chroot
 }
 
-
-arch-chroot /mnt  # Switch Back to Root
-
+set -ex
 
 #########################
 ##### Main Methode ######
@@ -479,3 +475,20 @@ fi
 
 
 
+install_packer() {
+    mkdir /foo
+    cd /foo
+    curl https://aur.archlinux.org/packages/pa/packer/packer.tar.gz | tar xzf -
+    cd packer
+    makepkg -si --noconfirm --asroot
+
+    cd /
+    rm -rf /foo
+}
+create_user() {
+    local name="$1"; shift
+    local password="$1"; shift
+
+    useradd -m -s /bin/zsh -G adm,systemd-journal,wheel,rfkill,games,network,video,audio,optical,floppy,storage,scanner,power,adbusers,wireshark "$name"
+    echo -en "$password\n$password" | passwd "$name"
+}
