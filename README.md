@@ -14,27 +14,15 @@ If you like to use a Desktop Environment during the installation, I created a Li
 
 1. Use the the Live-ISO above or the regarding ISO from the official [ArchLinux Website](https://archlinux.org/download/)
 
-2. Follow my ArchLinux Wiki Installation Guide ([Here](https://n0raitor.com/archlinux/)) until you reach "Post Installation - Booting".
-
-3. switch to your created user
-   
+2. Install:
    ```bash
-   su <your-username>
+   pacman -Sy git
    ```
 
-4. Clone this Repository: 
-   
-   ```bash
-   git clone git@github.com:n0raitor/archlinux-installer.git
-   ```
-
-5. execute the Post-Installation Script:
-   
+3. Run Installer
    ```bash
    cd archlinux-installer && chmod +x archlinux-post-install.sh && sudo ./archlinux-post-install.sh
    ```
-
-6. 
 
 In the Future, you are able to use arguments, to run different modes for a much quicker an simplier installation.
 
