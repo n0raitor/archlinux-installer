@@ -411,7 +411,7 @@ func_post_arch_chroot_config() {
 	echo "${rootdevice}"
 
 	echo "Edit Grub Default File "
-	sed -i "s/loglevel=3 quiet/cryptdevice=\/dev\/$rootdevice:cryptlvm:allow-discards loglevel=3/" /etc/default/grub
+	sed -i "s/loglevel=3 quiet/cryptdevice=\/dev\/${rootdevice}1:cryptlvm:allow-discards loglevel=3/" /etc/default/grub
 	sed -i "s/#GRUB_ENABLE_CRYPTODISK=\"y\"/GRUB_ENABLE_CRYPTODISK=\"y\"/" /etc/default/grub
 	
 	#echo " done"
