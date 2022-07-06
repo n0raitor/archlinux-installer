@@ -357,7 +357,8 @@ func_script_part1() {
 	sleep 3
 	arch-chroot /mnt ./install-archlinux.sh continue
 
-	if [ -f /mnt/install-archlinux.sh ]
+	echo $(pwd)
+	if [ -f install-archlinux.sh ]
     then
         echo 'ERROR: Something failed inside the chroot, not unmounting filesystems so you can investigate.'
         echo 'Make sure you unmount everything before you try to run this script again.'
