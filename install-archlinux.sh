@@ -251,7 +251,7 @@ func_gen_mirror_list() {
 
 func_install_base() {
 	echo "Installing Base System "
-	pacstrap /mnt base base-devel linux linux-headers linux-firmware nano dhcpcd lvm2 reflector git
+	pacstrap /mnt base base-devel zsh linux linux-headers linux-firmware nano dhcpcd lvm2 reflector git
 }
 
 func_config_archlinux() {
@@ -411,7 +411,7 @@ func_post_arch_chroot_config() {
 	echo "${rootdevice}"
 
 	echo "Edit Grub Default File "
-	sed -i "s/loglevel=3 quiet/cryptdevice=\/dev\/${rootdevice}:cryptlvm:allow-discards/" /etc/default/grub
+	sed -i "s/loglevel=3 quiet/cryptdevice=\/dev\/$rootdevice:cryptlvm:allow-discards/" /etc/default/grub
 	#echo " done"
 
 	# TODO Same with other default grub sections
