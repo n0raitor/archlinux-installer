@@ -407,11 +407,11 @@ func_post_arch_chroot_config() {
 	pacman -Sy --noconfirm grub efibootmgr
 	grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 	
-	rootdevice=$(cat /mnt/root/device.info)
+	rootdevice=$(cat device.info)
 	echo "${rootdevice}"
 
 	echo "Edit Grub Default File "
-	sed -i "s/loglevel=3 quiet/cryptdevice=\/dev\/$rootdevice:cryptlvm:allow-discards/" /etc/default/grub
+	sed -i "s/loglevel=3 quiet/cryptdevice=\/dev\/$rootdevice:cryptlvm:allow-discards loglevel=3/" /etc/default/grub
 	#echo " done"
 
 	# TODO Same with other default grub sections
