@@ -14,6 +14,8 @@ If you like to use a Desktop Environment during the installation, I created a Li
 
 1. Use the the Live-ISO above or the regarding ISO from the official [ArchLinux Website](https://archlinux.org/download/)
 
+2. Connect to the Internet (resource e.g. my [installation guide](https://n0raitor.com/archlinux))
+
 2. Install:
    ```bash
    pacman -Sy git

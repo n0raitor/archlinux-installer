@@ -315,13 +315,13 @@ func_script_part1() {
 	sleep 1
 
 	### Prologue ###
-	func_prologue
+	#func_prologue
 
 	### LoadKeys ###
 	func_loadkeys
 
 	### INTERNET CONNECTION ###
-	func_internet_connection
+	#func_internet_connection
 
 	### Check internet Connection ###
 	func_check_internet_connection
