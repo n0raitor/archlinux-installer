@@ -410,11 +410,7 @@ func_post_arch_chroot_config() {
 	echo "${rootdevice}"
 
 	echo "Edit Grub Default File "
-	match_GRUB="loglevel=3 quiet"
-	insert_GRUB="cryptdevice=/dev/${rootdevice}:cryptlvm:allow-discards"
-	echo $insert_GRUB >> $logfile
-	file_GRUB="/etc/default/grub"
-	sed -i "s/$match_GRUB/$insert_GRUB/" $file_GRUB
+	sed -i "s/loglevel=3 quiet/cryptdevice=\/dev\/${rootdevice}:cryptlvm:allow-discards/" /etc/default/grub
 	#echo " done"
 
 	# TODO Same with other default grub sections
